@@ -120,11 +120,25 @@
   }
 
   // ============ ADMIN LISTENS LOCATION ============
+  // Uses localStorage + storage event (works across tabs on same browser)
   function listenLocation() {
-    setInterval(() => {
-      const data = localStorage.getItem('deliveryLocation');
-      if (data) {
-        const { lat, lng } = JSON.parse(data);
+    // Initial fetch
+    const data = localStorage.getItem('deliveryLocation');
+    if (data) {
+      const { lat, lng } = JSON.parse(data);
+      marker.setLatLng([lat, lng]);
+      map.setView([lat, lng]);
+    }
+
+    // Listen for live updates from delivery tab
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'deliveryLocation' && event.newValue) {
+        const { lat, lng } = JSON.parse(event.newValue);
+        marker.setLatLng([lat, lng]);
+        map.setView([lat, lng]);
+      }
+    });
+  } = JSON.parse(data);
         marker.setLatLng([lat, lng]);
         map.setView([lat, lng]);
       }
